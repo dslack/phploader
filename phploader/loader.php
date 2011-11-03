@@ -378,7 +378,10 @@ class YAHOO_util_Loader
         $this->apcAvail   = function_exists('apc_fetch');
         $this->jsonAvail  = function_exists('json_encode');
         $this->customModulesInUse = empty($modules) ? false : true;
+        
+        //base will be null for 3.4.0 and higher
         $this->base = $yui_current[YUI_BASE];
+        
         $this->comboDefaultVersion = $yuiVersion;
         $this->fullCacheKey = null;
         $cache = null;
@@ -402,7 +405,11 @@ class YAHOO_util_Loader
             if ($noYui) {
                 $this->modules = array();
             } else {
+            	//moduleInfo is null
                 $this->modules = $yui_current['moduleInfo'];
+                if (is_null($this->modules)) {
+                	$this->modules = $yui_current;
+                }
             }
 
             if ($modules) {
@@ -411,8 +418,12 @@ class YAHOO_util_Loader
                 );
             }
 
+			//skin will be null for 3.4.0 and higher
             $this->skin = $yui_current[YUI_SKIN];
-            $this->skin['overrides'] = array();
+            if (!is_null($this->skin)) {
+            	$this->skin['overrides'] = array();
+            }
+            
             $this->skin[YUI_PREFIX] = "skin-";
             $this->filters = array(
                     YUI_RAW => array(
